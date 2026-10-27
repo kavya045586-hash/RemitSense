@@ -95,5 +95,4 @@ tests/                  pytest suite
 
 Exchange rates by [ExchangeRate-API](https://www.exchangerate-api.com).
 
-## License
-MIT. See [LICENSE](LICENSE).
+
