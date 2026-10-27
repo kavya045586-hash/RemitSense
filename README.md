@@ -177,6 +177,4 @@ RemitSense/
 
 Exchange rate data is retrieved from [ExchangeRate-API](https://www.exchangerate-api.com/).
 
-## License
 
-See the [LICENSE](LICENSE) file for licensing information.
