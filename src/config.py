@@ -1,5 +1,4 @@
-"""Fee model for RemitSense AI
-"""
+
 import os
 
 from dotenv import load_dotenv
