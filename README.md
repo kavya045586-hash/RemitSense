@@ -86,6 +86,7 @@ streamlit run app.py
 ```
 
 Open [http://localhost:8501](http://localhost:8501) in your browser.
+open[https://remitsense-ai.onrender.com] in render
 
 ## Configuration
 
