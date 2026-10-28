@@ -1,16 +1,4 @@
-"""Fee model for RemitSense AI.
-
-Source: PayPal India merchant fees page (seller receiving an international
-payment from outside India, USD received and converted to INR):
-https://www.paypal.com/in/business/paypal-business-fees
-(page states "Last Updated: 28 March 2024"; checked 27 Oct 2026)
-
-  - Receiving international transactions: 4.40% + fixed fee
-  - Fixed fee for USD:                    0.30 USD
-  - Converting payments received into another currency:
-                                          3.0% above the base exchange rate
-
-Re-check the page before submitting in case PayPal has changed these.
+"""Fee model for RemitSense AI
 """
 import os
 
