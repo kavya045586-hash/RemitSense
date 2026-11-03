@@ -2,47 +2,146 @@
 
 RemitSense AI is a Python application for estimating cross-border payments from USD to INR. Instead of starting with the amount the sender wants to transfer, it starts with the amount the recipient needs to receive.
 
-The application calculates the estimated USD payment, breaks down the fees and currency conversion costs, and provides an explanation of the calculation. It also includes a PayPal Sandbox checkout flow for testing the payment process.
+The application calculates the estimated USD payment, breaks down fees and currency conversion costs, and provides an easy-to-understand explanation of the calculation. It also includes a PayPal Sandbox checkout flow for testing the payment process.
+
+## Live Demo
+
+https://remitsense-ai.onrender.com
+
+## Video Demo
+
+https://youtu.be/3b0Dbv9Htwo
+
+The demo video demonstrates:
+
+- Recipient-first INR payment estimation
+- Fee and exchange-rate breakdown
+- AI-generated payment explanations using Google Gemini
+- PayPal Sandbox checkout flow
+- Order approval and payment capture
+
+---
 
 ## Features
 
 - Calculate the USD amount required to deliver a target INR amount.
-- Show the estimated transaction fee, currency conversion cost, and recipient amount.
-- Retrieve the latest available USD-to-INR exchange rate, with caching and a fallback rate.
-- Generate plain-language explanations using Google Gemini.
-- Validate AI-generated explanations against the calculated results and use a template when the explanation fails validation.
+- Show estimated transaction fees, currency conversion costs, and recipient amount.
+- Retrieve the latest available USD-to-INR exchange rate with caching and fallback support.
+- Generate plain-language payment explanations using Google Gemini.
+- Validate AI-generated explanations against calculated results.
+- Use a template-based explanation if validation fails.
 - Create, approve, and capture PayPal Sandbox orders.
-- Run automated tests for the calculator, explanation validation, and payment flow.
+- Run automated tests for calculations, explanations, and payment flow.
 
-## How it works
+---
 
-1. Enter the amount you want the recipient to receive in INR.
-2. The application retrieves the exchange rate and applies the fee settings defined in `src/config.py`.
-3. The calculator estimates the USD amount required and produces a fee breakdown.
-4. The application generates an explanation of the result.
-5. If you choose PayPal checkout, the app creates a Sandbox order and redirects you to PayPal for approval.
-6. After approval, the application captures the order and displays the payment status.
+## Problem Statement
 
-The payment calculation is handled by Python code. Gemini is used only to explain the calculated result, not to determine the payment amounts.
+When sending money internationally, users usually know how much the recipient needs to receive, but most payment systems begin with the amount being sent. This makes it difficult to understand fees, exchange rates, and the final amount delivered.
 
-## Technology stack
+RemitSense AI solves this problem by working backward from the recipient's target INR amount and providing transparency into fees, exchange rates, and payment costs before a payment is made.
 
-- **Python** — calculation and application logic
-- **Streamlit** — user interface
-- **Google Gemini API** — payment explanation
-- **PayPal Orders API v2** — Sandbox checkout
-- **ExchangeRate-API** — USD-to-INR exchange rates
-- **pytest** — automated tests
+---
+
+## How It Works
+
+1. Enter the amount the recipient should receive in INR.
+2. The application retrieves the latest USD-INR exchange rate.
+3. The calculator applies configurable fees and currency conversion costs.
+4. The required USD payment amount is estimated.
+5. Google Gemini generates a plain-language explanation of the result.
+6. Users can initiate a PayPal Sandbox checkout.
+7. After approval, the payment is captured and the status is displayed.
+
+---
+
+## Architecture
+
+```text
+User Input (Target INR Amount)
+              │
+              ▼
+     Exchange Rate API
+              │
+              ▼
+     Payment Calculator
+              │
+              ▼
+      Fee Breakdown
+              │
+              ▼
+    Gemini Explanation
+              │
+              ▼
+  PayPal Sandbox Order
+              │
+              ▼
+     Payment Capture
+```
+
+---
+
+## Technology Stack
+
+### Core Technologies
+
+- Python
+- Streamlit
+
+### AI
+
+- Google Gemini API
+- Explanation validation and fallback system
+
+### Payments
+
+- PayPal Orders API v2
+- PayPal Sandbox
+
+### Data
+
+- ExchangeRate-API
+
+### Testing
+
+- pytest
+
+---
+
+## AI Usage
+
+Google Gemini is used exclusively to explain calculation results in user-friendly language.
+
+The payment amounts, fees, exchange rates, and recipient values are determined entirely by the application's calculation engine.
+
+If the AI explanation does not match the calculated results, RemitSense AI automatically falls back to a validated template-based explanation. This ensures consistency and reliability.
+
+---
+
+## PayPal Usage
+
+RemitSense AI integrates with PayPal Orders API v2 to:
+
+- Create payment orders
+- Redirect buyers to PayPal for approval
+- Capture approved payments
+- Display payment status
+
+The PayPal Sandbox environment is used for testing and demonstration purposes.
+
+---
 
 ## Requirements
 
 - Python 3.10 or later
-- A Google Gemini API key (optional; a template explanation is used without it)
-- PayPal Sandbox REST application credentials for checkout testing
+- Google Gemini API Key (optional)
+- PayPal Sandbox REST Application Credentials
+
+---
 
 ## Installation
 
-Clone the repository and move into the project directory:
+Clone the repository:
 
 ```bash
 git clone https://github.com/kavya045586-hash/RemitSense.git
@@ -51,131 +150,184 @@ cd RemitSense
 
 Create and activate a virtual environment.
 
-**Windows:**
+### Windows
 
 ```powershell
 python -m venv venv
 venv\Scripts\activate
 ```
 
-**macOS/Linux:**
+### macOS / Linux
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
 
-Install the dependencies:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Create a local environment file by copying the example:
+Create an environment file:
 
-```bash
+### Windows
+
+```powershell
 copy .env.example .env
 ```
 
-On macOS or Linux, use `cp .env.example .env` instead.
+### macOS / Linux
 
-Add the required credentials to `.env`, then start the application:
+```bash
+cp .env.example .env
+```
+
+Add the required credentials to `.env`.
+
+Run the application:
 
 ```bash
 streamlit run app.py
 ```
 
-Open [http://localhost:8501](http://localhost:8501) in your browser.
-open[https://remitsense-ai.onrender.com] in render
+Open:
+
+```text
+http://localhost:8501
+```
+
+---
 
 ## Configuration
 
-Set the following environment variables in your local `.env` file or deployment environment.
-
 | Variable | Description |
-|---|---|
-| `GEMINI_API_KEY` | Google Gemini API key. Optional; the app can use a template explanation instead. |
-| `PAYPAL_CLIENT_ID` | PayPal Sandbox application client ID. |
-| `PAYPAL_SECRET` | PayPal Sandbox application secret. |
-| `APP_BASE_URL` | Base URL used for PayPal return and cancellation redirects. Defaults to `http://localhost:8501`. |
-| `GEMINI_MODEL` | Gemini model to use. Defaults to `gemini-flash-latest`. |
+|-----------|------------|
+| GEMINI_API_KEY | Google Gemini API Key (optional) |
+| PAYPAL_CLIENT_ID | PayPal Sandbox Client ID |
+| PAYPAL_SECRET | PayPal Sandbox Secret |
+| APP_BASE_URL | URL used for PayPal redirects |
+| GEMINI_MODEL | Gemini model name (default: gemini-flash-latest) |
 
-Do not commit `.env` or other files containing credentials. The repository includes `.env.example` for documenting the required configuration.
+> Never commit secrets or credentials to version control.
 
-## Running the tests
+---
 
-Run the automated test suite with:
+## Running Tests
+
+Run the automated test suite:
 
 ```bash
 pytest
 ```
 
-To check the Gemini API configuration, run:
+Check Gemini configuration:
 
 ```bash
 python check_gemini.py
 ```
 
-## Fee calculation
+---
 
-The fee settings are defined in `src/config.py`. The current model uses the following estimates for an Indian merchant receiving an international USD payment:
+## Fee Calculation Model
 
-| Fee component | Configured value |
-|---|---:|
-| International payment fee | 4.40% |
-| Fixed transaction fee | USD 0.30 |
-| Currency conversion markup | 3.0% above the base exchange rate |
+Fee settings are configurable through `src/config.py`.
 
-These values are assumptions used by the application and should be checked against the applicable PayPal fees before relying on a quote. Actual fees can vary by transaction type, account, and applicable terms.
+Current assumptions:
 
-## PayPal Sandbox
+| Fee Component | Value |
+|--------------|--------|
+| International Payment Fee | 4.40% |
+| Fixed Transaction Fee | USD 0.30 |
+| Currency Conversion Markup | 3.0% |
 
-The application uses PayPal Sandbox to demonstrate order creation, buyer approval, and payment capture. Use a Sandbox buyer account when testing checkout.
+These values are estimates used for demonstration purposes and may differ from actual PayPal fees.
 
-1. Calculate a payment.
-2. Select **Pay with PayPal**.
-3. Open the PayPal checkout page.
-4. Sign in using your Sandbox buyer account.
-5. Approve the payment and return to the application.
-6. Check the resulting payment status.
+Always verify current pricing before relying on production estimates.
 
-Create a test buyer account through the PayPal Developer Dashboard if you do not already have one. Do not put Sandbox passwords or other credentials in this README.
+---
 
-**Limitation:** Sandbox checkout does not transfer INR to a real recipient's bank account. The recipient amount is an estimate based on the exchange rate and configured fee model; the PayPal flow demonstrates payment processing rather than an actual international payout.
+## PayPal Sandbox Testing
+
+1. Enter a target INR amount.
+2. Review the calculated estimate.
+3. Select **Pay with PayPal**.
+4. Sign in using a PayPal Sandbox buyer account.
+5. Approve the payment.
+6. Return to the application.
+7. View the captured payment status.
+
+### Limitation
+
+Sandbox payments do not transfer real funds and do not deliver INR to a real recipient.
+
+The recipient amount shown by RemitSense AI is an estimate based on exchange rates and configured fee assumptions. The PayPal Sandbox integration demonstrates payment processing functionality only.
+
+---
 
 ## Deployment
 
-The repository includes a `render.yaml` configuration for deployment on Render.
+The project includes a Render deployment configuration.
 
-1. Push the project to GitHub.
-2. Create a Render service using the repository and its configuration.
-3. Add the required environment variables in Render.
-4. Set `APP_BASE_URL` to the deployed application's public URL.
-5. Test the calculator and PayPal Sandbox flow after deployment.
+Deployment steps:
 
-The service may take some time to respond after periods of inactivity, depending on the selected hosting plan.
+1. Push the repository to GitHub.
+2. Create a Render service.
+3. Connect the GitHub repository.
+4. Add the required environment variables.
+5. Set `APP_BASE_URL` to the deployed application URL.
+6. Deploy and test the application.
 
-## Project structure
+### Live Application
+
+https://remitsense-ai.onrender.com
+
+---
+
+## Project Structure
 
 ```text
 RemitSense/
-├── app.py                  # Streamlit interface and payment flow
+├── app.py
 ├── src/
-│   ├── calculator.py       # Payment and fee calculations
-│   ├── config.py           # Fee model and configuration
-│   ├── exchange_rate.py    # Exchange rate retrieval and fallback
-│   ├── ai_explainer.py     # Gemini explanations and validation
-│   └── paypal_service.py   # PayPal order operations
-├── tests/                  # Automated tests
-├── check_gemini.py         # Gemini configuration check
-├── requirements.txt        # Python dependencies
-├── render.yaml             # Render deployment configuration
-├── .env.example            # Example environment variables
+│   ├── calculator.py
+│   ├── config.py
+│   ├── exchange_rate.py
+│   ├── ai_explainer.py
+│   └── paypal_service.py
+├── tests/
+├── check_gemini.py
+├── requirements.txt
+├── render.yaml
+├── .env.example
+├── LICENSE
 └── README.md
 ```
 
-## Exchange rates
+---
 
-Exchange rate data is retrieved from [ExchangeRate-API](https://www.exchangerate-api.com/).
+## Exchange Rates
 
+Exchange rate data is retrieved from:
 
+https://www.exchangerate-api.com/
+
+---
+
+## Future Improvements
+
+- Support additional countries and currencies
+- Historical exchange-rate analysis
+- Exchange-rate alerts
+- Fee comparison across providers
+- Recipient-side payout simulations
+- Enhanced AI-powered payment insights
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+See the LICENSE file for details.
